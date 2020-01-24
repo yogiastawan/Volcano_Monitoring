@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/drawer_layout"
+    tools:openDrawer="start">
+<!--    main content-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_lands"
+        android:orientation="vertical">
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/custom_toolbar" />
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:columnCount="4"
+            android:rowCount="2"
+            tools:context=".MainActivity"
+            android:paddingStart="8dp"
+            android:paddingLeft="8dp"
+            android:paddingEnd="8dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="8dp"
+            android:paddingTop="4dp"
+            android:useDefaultMargins="true">
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/chart"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_row="0"
+                android:layout_rowSpan="2"
+                android:layout_rowWeight="1"
+                android:layout_column="0"
+                android:layout_columnSpan="2"
+                android:layout_columnWeight="2"
+                android:layout_margin="8dp"
+                android:padding="8dp"/>
+
+            <id.yogiastawan.customui.AwesomeStatusView
+                android:id="@+id/suhu"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_row="0"
+                android:layout_rowWeight="1"
+                android:layout_column="2"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                app:label="Temperature"
+                app:primarySize="32sp"
+                app:secondarySize="12sp"
+                app:status="@string/unknown"
+                app:unit="\u00b0"
+                app:value="--" />
+
+            <id.yogiastawan.customui.AwesomeStatusView
+                android:id="@+id/kelembapan"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_row="0"
+                android:layout_rowWeight="1"
+                android:layout_column="3"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                app:label="Humidity"
+                app:primarySize="32sp"
+                app:secondarySize="12sp"
+                app:status="@string/unknown"
+                app:unit="%"
+                app:value="--" />
+
+            <id.yogiastawan.customui.AwesomeStatusView
+                android:id="@+id/gempa"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_row="1"
+                android:layout_rowWeight="1"
+                android:layout_column="2"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                app:label="Tremor"
+                app:primarySize="32sp"
+                app:secondarySize="12sp"
+                app:status="@string/unknown"
+                app:value="--" />
+
+            <id.yogiastawan.customui.AwesomeStatusEruptionView
+                android:id="@+id/status"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_row="1"
+                android:layout_rowWeight="1"
+                android:layout_column="3"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                app:image="@drawable/ic_unknown"
+                app:labelname="Eruption"
+                app:statuseruption="@string/unknown"
+                app:textsize="12sp" />
+        </GridLayout>
+    </LinearLayout>
+<!--    navigation menu-->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/header_menu_drawer"
+        app:menu="@menu/menu"
+        android:background="@drawable/navigation_menu_background"/>
+</androidx.drawerlayout.widget.DrawerLayout>

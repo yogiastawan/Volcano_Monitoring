@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginRight="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="4dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginStart="8dp"
+    android:background="@drawable/toolbar_background"
+    app:contentInsetStart="8dp"
+    app:contentInsetEnd="8dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+<!--        <ImageButton-->
+<!--            android:id="@+id/imgbtn"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_alignParentStart="true"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            android:background="@android:color/transparent"-->
+<!--            android:contentDescription="@string/open_navigation"-->
+<!--            android:src="@drawable/ic_menu_black_24dp" />-->
+
+        <TextView
+            android:id="@+id/lastSync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:drawableEnd="@drawable/ic_sync_black_24dp"
+            android:gravity="center_vertical|end"
+            android:textColor="@android:color/white"
+            android:text="@string/default_timeSync" />
+    </RelativeLayout>
+
+</androidx.appcompat.widget.Toolbar>

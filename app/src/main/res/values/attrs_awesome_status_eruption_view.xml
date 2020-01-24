@@ -1,0 +1,10 @@
+<resources>
+    <declare-styleable name="AwesomeStatusEruptionView">
+        <attr name="labelname" format="string" />
+        <attr name="image" format="reference" />
+        <attr name="statuseruption" format="string" />
+        <attr name="textsize" format="dimension"/>
+        <attr name="imagesize" format="dimension"/>
+<!--        <attr name="exampleDrawable" format="color|reference" />-->
+    </declare-styleable>
+</resources>

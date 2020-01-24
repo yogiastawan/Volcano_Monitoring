@@ -1,0 +1,11 @@
+<resources>
+    <declare-styleable name="AwesomeStatusView">
+        <attr name="label" format="string" />
+        <attr name="value" format="string" />
+        <attr name="status" format="string" />
+        <attr name="unit" format="string"/>
+        <attr name="secondarySize" format="dimension"/>
+        <attr name="primarySize" format="dimension"/>
+<!--        <attr name="exampleDrawable" format="color|reference" />-->
+    </declare-styleable>
+</resources>

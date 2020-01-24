@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">Volcano Monitoring</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="open_navigation">Open Navigation</string>
+    <string name="last_syncronitation">Last Syncronitation</string>
+    <string name="default_timeSync">12/12/2012 00:00</string>
+    <string name="name">Michael Angelo Vincensio S.</string>
+    <string name="nim">1404405075</string>
+    <string name="logo">LOGO</string>
+    <string name="show_map">Show Map</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+    <string name="waspada">Waspada</string>
+    <string name="normal">Normal</string>
+    <string name="eruption_no">Eruption: No</string>
+    <string name="siaga">Siaga</string>
+    <string name="awas">Awas</string>
+    <string name="tremor">Gempa</string>
+    <string name="eruption_yes">Eruption: Yes</string>
+    <string name="kering">Kering</string>
+    <string name="basah">Basah</string>
+    <string name="lembab">Lembab</string>
+    <string name="unknown">UNKNOWN</string>
+    <string name="radius_km">Radius: — KM</string>
+    <string name="jarak_user">Jarak User: — KM.</string>
+    <string name="radius_bahaya">Radius Bahaya — KM.</string>
+</resources>
