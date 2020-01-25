@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.Network;
+import android.net.NetworkInfo;
 import android.net.NetworkRequest;
 import android.os.Build;
 import android.os.Bundle;
@@ -274,31 +275,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkConnectionInternet(){
+        Log.d("INTERNET", "oncek: ncek internet");
         ConnectivityManager connectivityManager= (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP&&Build.VERSION.SDK_INT< Build.VERSION_CODES.N){
-            NetworkRequest.Builder netwoekReq=new NetworkRequest.Builder();
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP&&Build.VERSION.SDK_INT<= Build.VERSION_CODES.P){
             if (connectivityManager != null) {
-                connectivityManager.registerNetworkCallback(netwoekReq.build(),new ConnectivityManager.NetworkCallback(){
-                    @Override
-                    public void onAvailable(@NonNull Network network) {
-                        super.onAvailable(network);
-                    }
-
-                    @Override
-                    public void onUnavailable() {
-                        super.onUnavailable();
-                        noInternetConnectionPrompt();
-                    }
-
-                    @Override
-                    public void onLost(@NonNull Network network) {
-                        super.onLost(network);
-                        noInternetConnectionPrompt();
-                    }
-                });
+                NetworkInfo info=connectivityManager.getActiveNetworkInfo();
+                if (info==null||!info.isConnectedOrConnecting()){
+                    noInternetConnectionPrompt();
+                    Log.d("INTERNET", "checkConnectionInternet: no connection");
+                }
             }
+
+
         }
-        if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.Q) {
             if (connectivityManager != null) {
                 connectivityManager.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback() {
                     @Override
@@ -324,20 +314,22 @@ public class MainActivity extends AppCompatActivity {
 
     private void noInternetConnectionPrompt(){
 //        AlertDialog dialog = null;
+        Log.d("INTERNET", "onUnavailable: dialog");
         AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(MainActivity.this);
-        AlertDialog dialog=dialogBuilder.create();
+
         dialogBuilder.setTitle("No Internet Connection")
-                .setMessage("Please turn off plan mode, and enable data connection or connect to wifi")
+                .setMessage("Please turn off plan mode, and enable data connection or connect to wifi!")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 //                        dialog.hide();
+                        //dialog.dismiss();
                         checkConnectionInternet();
 
                     }
                 })
                 .setIcon(getDrawable(R.drawable.ic_portable_wifi_off_black_24dp));
-
+        AlertDialog dialog=dialogBuilder.create();
         dialog.show();
     }
 
