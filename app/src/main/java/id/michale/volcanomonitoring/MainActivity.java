@@ -5,17 +5,24 @@ import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkRequest;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -40,7 +47,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -93,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
     double long_gunung;
 
     String lastDataReceive;
+
+    private static final int PERMISSIONS_REQUEST_CODE = 34;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,13 +203,32 @@ public class MainActivity extends AppCompatActivity {
             yValKelembapan = mainActivityModel.getChartYValKelembapan();
             setData();
         }
+        
+        //check google play
+        if (!isGooglePlayServiceAvailable()){
+            Toast.makeText(this, "Google Play Service is not avaliable. Map and location will not work properly", Toast.LENGTH_LONG).show();
+        }
 
+        //check internet connection
+        checkConnectionInternet();
+
+        //check permission
+        if (!checkPermission()){
+            requestPermission();
+
+            if (!checkBackgroundLocationPermission()){
+                requestPermissionBackLocation();
+            }
+        }else {
+            requestPermission();
+            requestPermissionBackLocation();
+        }
 
         //start service if not already running
         ctx = this;
         getDataThread = new GetDataThread(getContext());
         serviceIntent = new Intent(getContext(), getDataThread.getClass());
-        if (!isMyServiceRunning(getDataThread.getClass())) {
+        if (isMyServiceNotRunning(getDataThread.getClass())) {
             startService(serviceIntent);
             Log.d("MainActivity", "onCreate: service start");
         }
@@ -225,16 +252,93 @@ public class MainActivity extends AppCompatActivity {
     private boolean checkPermission(){
         int fineLocationPermission= ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         int coarseLocationPermission=ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION);
-        if (fineLocationPermission== PackageManager.PERMISSION_GRANTED&&coarseLocationPermission==PackageManager.PERMISSION_GRANTED){
-            return true;
-        }
-        return false;
+        return fineLocationPermission == PackageManager.PERMISSION_GRANTED && coarseLocationPermission == PackageManager.PERMISSION_GRANTED;
     }
 
     private boolean checkBackgroundLocationPermission(){
-        int backLocationPermission=ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+        int backLocationPermission= 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            backLocationPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+        }
 
         return backLocationPermission==PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermission(){
+        ActivityCompat.requestPermissions(MainActivity.this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},PERMISSIONS_REQUEST_CODE);
+    }
+    private void requestPermissionBackLocation(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ActivityCompat.requestPermissions(MainActivity.this,new String[] {Manifest.permission.ACCESS_BACKGROUND_LOCATION},PERMISSIONS_REQUEST_CODE);
+        }
+    }
+
+    private void checkConnectionInternet(){
+        ConnectivityManager connectivityManager= (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP&&Build.VERSION.SDK_INT< Build.VERSION_CODES.N){
+            NetworkRequest.Builder netwoekReq=new NetworkRequest.Builder();
+            if (connectivityManager != null) {
+                connectivityManager.registerNetworkCallback(netwoekReq.build(),new ConnectivityManager.NetworkCallback(){
+                    @Override
+                    public void onAvailable(@NonNull Network network) {
+                        super.onAvailable(network);
+                    }
+
+                    @Override
+                    public void onUnavailable() {
+                        super.onUnavailable();
+                        noInternetConnectionPrompt();
+                    }
+
+                    @Override
+                    public void onLost(@NonNull Network network) {
+                        super.onLost(network);
+                        noInternetConnectionPrompt();
+                    }
+                });
+            }
+        }
+        if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.N) {
+            if (connectivityManager != null) {
+                connectivityManager.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback() {
+                    @Override
+                    public void onAvailable(@NonNull Network network) {
+                        super.onAvailable(network);
+                    }
+
+                    @Override
+                    public void onUnavailable() {
+                        super.onUnavailable();
+                        noInternetConnectionPrompt();
+                    }
+
+                    @Override
+                    public void onLost(@NonNull Network network) {
+                        super.onLost(network);
+                        noInternetConnectionPrompt();
+                    }
+                });
+            }
+        }
+    }
+
+    private void noInternetConnectionPrompt(){
+//        AlertDialog dialog = null;
+        AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(MainActivity.this);
+        AlertDialog dialog=dialogBuilder.create();
+        dialogBuilder.setTitle("No Internet Connection")
+                .setMessage("Please turn off plan mode, and enable data connection or connect to wifi")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        dialog.hide();
+                        checkConnectionInternet();
+
+                    }
+                })
+                .setIcon(getDrawable(R.drawable.ic_portable_wifi_off_black_24dp));
+
+        dialog.show();
     }
 
     @Override
@@ -249,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!isMyServiceRunning(getDataThread.getClass())) {
+        if (isMyServiceNotRunning(getDataThread.getClass())) {
             startService(new Intent(MainActivity.this, GetDataThread.class));
         }
         Log.d("LIFE CYCLE", "onResume: resume");
@@ -275,7 +379,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        if (!isMyServiceRunning(getDataThread.getClass())) {
+        if (isMyServiceNotRunning(getDataThread.getClass())) {
             startService(new Intent(MainActivity.this, GetDataThread.class));
         }
         this.registerReceiver(dataProcess, new IntentFilter("UpdateVolcanoStatus"));
@@ -495,17 +599,17 @@ public class MainActivity extends AppCompatActivity {
         return ctx;
     }
 
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
+    private boolean isMyServiceNotRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         assert manager != null;
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
-                Log.i("isMyServiceRunning?", true + "");
-                return true;
+                Log.i("isMyServiceNotRunning?", true + "");
+                return false;
             }
         }
-        Log.i("isMyServiceRunning?", false + "");
-        return false;
+        Log.i("isMyServiceNotRunning?", false + "");
+        return true;
     }
 
 }
