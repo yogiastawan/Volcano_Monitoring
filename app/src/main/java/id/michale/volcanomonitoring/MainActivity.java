@@ -1,11 +1,13 @@
 package id.michale.volcanomonitoring;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProviders;
@@ -29,12 +32,15 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -204,6 +210,33 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MainActivity", "onCreate: receive data");
     }
 
+    private boolean isGooglePlayServiceAvailable(){
+        GoogleApiAvailability googleApiAvailability=GoogleApiAvailability.getInstance();
+        int state=googleApiAvailability.isGooglePlayServicesAvailable(this);
+        if (state!= ConnectionResult.SUCCESS){
+            if (googleApiAvailability.isUserResolvableError(state)){
+                googleApiAvailability.getErrorDialog(this,state,2404).show();
+            }
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkPermission(){
+        int fineLocationPermission= ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        int coarseLocationPermission=ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION);
+        if (fineLocationPermission== PackageManager.PERMISSION_GRANTED&&coarseLocationPermission==PackageManager.PERMISSION_GRANTED){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkBackgroundLocationPermission(){
+        int backLocationPermission=ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+
+        return backLocationPermission==PackageManager.PERMISSION_GRANTED;
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -242,9 +275,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        if (!isMyServiceRunning(getDataThread.getClass())) {
+            startService(new Intent(MainActivity.this, GetDataThread.class));
+        }
         this.registerReceiver(dataProcess, new IntentFilter("UpdateVolcanoStatus"));
         Log.d("LIFE CYCLE", "onRestart: restart");
     }
+
+
+
+
+    /*
+    * Private class broadcaster receiver
+    * to receiving data from background service broadcaster
+    * */
 
     private class DataProcess extends BroadcastReceiver {
         String data;
@@ -254,7 +298,9 @@ public class MainActivity extends AppCompatActivity {
             //get data
             data = intent.getStringExtra("data");
             //send data to activity view
-            rawDataProcessing(data);
+            if (data != null) {
+                rawDataProcessing(data);
+            }
 
         }
 
@@ -396,6 +442,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*
+    * set chart value
+    * when there are data receiving from background service
+    * */
     private void setData() {
         LineDataSet mSuhu, mKelembapan;
 
@@ -436,6 +486,10 @@ public class MainActivity extends AppCompatActivity {
         chart.setData(lineData);
         chart.invalidate();
     }
+
+    /*
+    * function to check is background service already running or not.
+    * */
 
     public Context getContext() {
         return ctx;
