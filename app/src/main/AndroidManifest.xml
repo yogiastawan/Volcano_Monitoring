@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="id.michale.volcanomonitoring">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -43,6 +44,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
+            android:screenOrientation="portrait"
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity android:name=".MainActivity">
@@ -54,9 +56,15 @@
             </intent-filter>
         </activity>
 
+<!--        <service-->
+<!--            android:name=".GetDataThread"-->
+<!--            android:foregroundServiceType="location"-->
+<!--            android:enabled="true"-->
+<!--            tools:targetApi="q" />-->
         <service
             android:name=".GetDataThread"
-            android:enabled="true" />
+            android:enabled="true"
+            android:description="@string/desc"/>
     </application>
 
 </manifest>

@@ -36,4 +36,5 @@
     <string name="radius_km">Radius: — KM</string>
     <string name="jarak_user">Jarak User: — KM.</string>
     <string name="radius_bahaya">Radius Bahaya — KM.</string>
+    <string name="desc">Service to get data from server dan get user location</string>
 </resources>

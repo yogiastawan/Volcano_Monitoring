@@ -72,9 +72,9 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
     private LocationCallback locationCallback;
 
     LocationRequest locationRequest = new LocationRequest();
-    private int radius;
+    private int radius=0;
 
-    private double suhu, kelembapan;
+    private double suhu=-2000, kelembapan=2000;
     private long gempa;
 
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -104,7 +104,7 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
                 super.onLocationResult(locationResult);
                 lastLocation=new Location(LocationManager.PASSIVE_PROVIDER);
                 userLocation=new Location(LocationManager.PASSIVE_PROVIDER);
-                if (locationResult != null) {
+                if (locationResult != null&&suhu!=-2000) {
                     Location d = new Location(LocationManager.PASSIVE_PROVIDER);
                     for (Location location : locationResult.getLocations()) {
                         d = location;
@@ -146,12 +146,14 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
         }
     }
 
-    private void notificationBuild(String mainMessage, String status, String erupsi, int radius) {
+    private void notificationBuild(String mainMessage, String status, String erupsi, int radi) {
         Intent mapIntent = new Intent(this, MapsActivity.class);
+
+        Log.d("yogi service", "notificationBuild: "+longGunung);
 
         mapIntent.putExtra("lat_gunung", latGunung);
         mapIntent.putExtra("long_gunung", longGunung);
-        mapIntent.putExtra("radius", radius);
+        mapIntent.putExtra("radius", radi);
         if (userLocation != null) {
 //            Bundle bundle=new Bundle();
 //            bundle.putParcelable("location",userLocation);
@@ -166,7 +168,7 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
                 .setStyle(new NotificationCompat.InboxStyle()
                         .addLine(mainMessage)
                         .addLine(String.format(Locale.US, "Status: %s.", status))
-                        .addLine(radSelector(radius))
+                        .addLine(radSelector(radi))
                         .addLine(String.format(Locale.US, "Erupsi: %s.", erupsi)))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
@@ -306,35 +308,36 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
             if (userLocation != null) {
                 if ( distance <= 3) {
                     if (gempa <= 0) {
-                        notificationBuild( String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ),"Waspada", "Tidak", 3);
+                        notificationBuild( String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ),"Waspada", "Tidak", radius);
                     } else {
-                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ), "Waspada", "Ya", 3);
+                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ), "Waspada", "Ya", radius);
                     }
                 }else if (distance>3){
                     if (gempa<=0) {
-                        notificationBuild("Terjadi perubahan status gunung ke Waspada", "Waspada", "Tidak", 3);
+                        notificationBuild("Terjadi perubahan status gunung ke Waspada", "Waspada", "Tidak", radius);
                     }else {
-                        notificationBuild("Terjadi perubahan status gunung ke Waspada", "Waspada", "Ya", 3);
+                        notificationBuild("Terjadi perubahan status gunung ke Waspada", "Waspada", "Ya", radius);
                     }
                 }
 
             }
 
-        } else if ((suhu > 32 && suhu <= 37) && (kelembapan >= 10 && kelembapan <= 14)) {
+        }
+        else if ((suhu > 32 && suhu <= 37) && (kelembapan >= 10 && kelembapan <= 14)) {
             //waspada
             radius = 3;
             if (userLocation != null) {
                 if (distance< 3) {
                     if (gempa <= 0) {
-                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ), "Waspada", "Tidak", 3);
+                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ), "Waspada", "Tidak", radius);
                     } else {
-                        notificationBuild( String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ), "Waspada", "Ya", 3);
+                        notificationBuild( String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ), "Waspada", "Ya", radius);
                     }
                 }else {
                     if (gempa<=0) {
-                        notificationBuild("Terjadi perubahan status gunung ke Waspada", "Waspada", "Tidak", 3);
+                        notificationBuild("Terjadi perubahan status gunung ke Waspada", "Waspada", "Tidak", radius);
                     }else {
-                        notificationBuild("Terjadi perubahan status gunung ke Waspada", "Waspada", "Ya", 3);
+                        notificationBuild("Terjadi perubahan status gunung ke Waspada", "Waspada", "Ya", radius);
                     }
                 }
 
@@ -345,15 +348,15 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
             if (userLocation != null) {
                 if (distance < 6) {
                     if (gempa <= 0) {
-                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ),"Siaga", "Tidak", 6);
+                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ),"Siaga", "Tidak", radius);
                     } else{
-                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ),"Siaga", "Ya", 6);
+                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ),"Siaga", "Ya", radius);
                     }
                 }else {
                     if (gempa<=0) {
-                        notificationBuild("Terjadi perubahan status gunung ke Siaga", "Siaga", "Tidak", 6);
+                        notificationBuild("Terjadi perubahan status gunung ke Siaga", "Siaga", "Tidak", radius);
                     }else {
-                        notificationBuild("Terjadi perubahan status gunung ke Siaga", "Siaga", "Ya", 6);
+                        notificationBuild("Terjadi perubahan status gunung ke Siaga", "Siaga", "Ya", radius);
                     }
                 }
 
@@ -364,22 +367,22 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
             if (userLocation != null) {
                 if (distance < 9) {
                     if (gempa <= 0) {
-                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ),"Awas", "Tidak", 9);
+                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ),"Awas", "Tidak", radius);
                     } else {
-                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ),"Awas", "Ya", 9);
+                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ),"Awas", "Ya", radius);
                     }
                 }else {
                     if (gempa<=0) {
-                        notificationBuild("Terjadi perubahan status gunung ke Awas", "Awas", "Tidak", 9);
+                        notificationBuild("Terjadi perubahan status gunung ke Awas", "Awas", "Tidak", radius);
                     }else {
-                        notificationBuild("Terjadi perubahan status gunung ke Awas", "Awas", "Ya", 9);
+                        notificationBuild("Terjadi perubahan status gunung ke Awas", "Awas", "Ya", radius);
                     }
                 }
 
             }
         } else {
             radius = 99;
-            notificationBuild("Waspada! terjadi aktivitas vulkanik", "Unknown", "Unknown", 99);
+            notificationBuild("Waspada! terjadi aktivitas vulkanik", "Unknown", "Unknown", radius);
         }
 
     }
@@ -419,7 +422,7 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
 
     @Override
     public void onLocationChanged(Location location) {
-        if (location != null) {
+        if (location != null&&suhu!=-200000) {
             locationBroadcast.putExtra("user_location", location);
             locationBroadcast.putExtra("radius", radius);
             sendBroadcast(locationBroadcast);

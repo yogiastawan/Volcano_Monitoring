@@ -41,7 +41,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 //    private float lastZoom=12f;
 
-    private float radius;
+    private int radius;
 
     DataProsess dataProses = new DataProsess();
 
@@ -58,9 +58,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         lastLocation = new Location(LocationManager.PASSIVE_PROVIDER);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            longitudeGunung = extras.getDouble("long_gunung", 0);
-            latitudeGunung = extras.getDouble("lat_gunung", 0);
+            longitudeGunung = extras.getDouble("long_gunung");
+            latitudeGunung = extras.getDouble("lat_gunung");
 //            userLocation=extras.getParcelable("user_location");
+            Log.d("yogi", "onCreate: "+longitudeGunung);
 
             if (extras.getParcelable("user_location") != null) {
                 userLocation = extras.getParcelable("user_location");
@@ -69,6 +70,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
             radius = extras.getInt("radius", 0);
+            radiusBahaya.setText(String.format(Locale.US,"Radius Bahaya: %d KM",radius));
         }
 
         if (mapFragment != null) {
@@ -159,7 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             radius = intent.getIntExtra("radius", 0);
             if (radius<99) {
-                radiusBahaya.setText(String.format(Locale.US, "Radius Bahaya %.2f KM.", radius));
+                radiusBahaya.setText(String.format(Locale.US, "Radius Bahaya %d KM.", radius));
             }else {
                 radiusBahaya.setText("Radius Bahaya -- KM.");
             }
