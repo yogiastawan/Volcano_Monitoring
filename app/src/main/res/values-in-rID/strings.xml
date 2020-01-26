@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Volcano Monitoring</string>
+    <string name="action_settings">Pengaturan</string>
+    <string name="awas">Awas</string>
+    <string name="basah">Basah</string>
+    <string name="default_timeSync">12/12/2012 00:00</string>
+    <string name="desc">Servis latar belakang untuk mendapatkan data dari server dan lokasi terkini</string>
+    <string name="eruption_no">Erupsi: Tidak</string>
+    <string name="eruption_yes">Eupsi: Ya</string>
+    <string name="jarak_user">Jarak Pengguna: — KM.</string>
+    <string name="kering">Kering</string>
+    <string name="last_syncronitation">Sinkronisasi Terakhir</string>
+    <string name="normal">Normal</string>
+    <string name="open_navigation">Buka Menu Navigasi</string>
+    <string name="radius_bahaya">Radius Bahaya: — KM.</string>
+    <string name="radius_km">Radius: — KM</string>
+    <string name="show_map">Buka Peta</string>
+    <string name="tremor">Earthquake</string>
+    <string name="siaga">Siaga</string>
+    <string name="waspada">Waspada</string>
+    <string name="lembab">Lembab</string>
+</resources>
