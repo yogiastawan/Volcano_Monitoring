@@ -72,9 +72,9 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
     private LocationCallback locationCallback;
 
     LocationRequest locationRequest = new LocationRequest();
-    private int radius=0;
+    private int radius = 0;
 
-    private double suhu=-2000, kelembapan=2000;
+    private double suhu = -2000, kelembapan = 2000;
     private long gempa;
 
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -98,13 +98,13 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
     public void onCreate() {
         super.onCreate();
         createNotificationChannel();
+        lastLocation = new Location(LocationManager.PASSIVE_PROVIDER);
+        userLocation = new Location(LocationManager.PASSIVE_PROVIDER);
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-                lastLocation=new Location(LocationManager.PASSIVE_PROVIDER);
-                userLocation=new Location(LocationManager.PASSIVE_PROVIDER);
-                if (locationResult != null&&suhu!=-2000) {
+                if (locationResult != null && suhu != -2000) {
                     Location d = new Location(LocationManager.PASSIVE_PROVIDER);
                     for (Location location : locationResult.getLocations()) {
                         d = location;
@@ -117,14 +117,11 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
                     userLocation = locationResult.getLastLocation();
                     Log.d(TAG, "onLocationResult: " + d);
                     sendBroadcast(locationBroadcast);
-
-//                    if (userLocation!=null) {
-                        if ((userLocation.getLatitude() != lastLocation.getLatitude()) && (userLocation.getLongitude() != lastLocation.getLongitude())) {
-                            logicalBuild();
-                        }
-                        lastLocation.setLatitude(userLocation.getLatitude());
-                        lastLocation.setLongitude(userLocation.getLongitude());
-//                    }
+                    if ((userLocation.getLatitude() != lastLocation.getLatitude()) && (userLocation.getLongitude() != lastLocation.getLongitude())) {
+                        logicalBuild();
+                    }
+                    lastLocation.setLatitude(userLocation.getLatitude());
+                    lastLocation.setLongitude(userLocation.getLongitude());
 
                 }
             }
@@ -134,10 +131,10 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Channel Volcano";
+            CharSequence name = "Channel Volcano Monitoring";
             String description = "Volcano Status Warning";
             int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel("VOLCANO_NOTIF", name, importance);
+            NotificationChannel channel = new NotificationChannel("VOLCANO_NOTIFIFICATION", name, importance);
             channel.setDescription(description);
             notificationManager = getSystemService(NotificationManager.class);
             if (notificationManager != null) {
@@ -149,7 +146,7 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
     private void notificationBuild(String mainMessage, String status, String erupsi, int radi) {
         Intent mapIntent = new Intent(this, MapsActivity.class);
 
-        Log.d("yogi service", "notificationBuild: "+longGunung);
+        Log.d("yogi service", "notificationBuild: " + longGunung);
 
         mapIntent.putExtra("lat_gunung", latGunung);
         mapIntent.putExtra("long_gunung", longGunung);
@@ -159,9 +156,10 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
 //            bundle.putParcelable("location",userLocation);
             mapIntent.putExtra("user_location", userLocation);
         }
-        mapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, mapIntent, 0);
-        notificationBuilder = new NotificationCompat.Builder(this, "VOLCANO_NOTIF");
+//        mapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        mapIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, mapIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationBuilder = new NotificationCompat.Builder(this, "VOLCANO_NOTIFIFICATION");
         notificationBuilder.setSmallIcon(R.drawable.ic_awas)
                 .setContentTitle("Volcano App Warning")
                 .setContentText(mainMessage)
@@ -177,8 +175,8 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
         notificationManager.notify(0, notificationBuilder.build());
     }
 
-    String radSelector (int rad){
-        if (rad>=99){
+    String radSelector(int rad) {
+        if (rad >= 99) {
             return "Radius bahaya: -- KM.";
         } else {
             return String.format(Locale.US, "Radius bahaya: %d KM.", rad);
@@ -291,52 +289,50 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
         }
     }
 
-    private void logicalBuild(){
+    private void logicalBuild() {
 
-        float distance=0;
-        if (userLocation!=null){
-            distance=distanceCalculate(latGunung, longGunung, userLocation.getLatitude(), userLocation.getLongitude());
-            Log.d(TAG, "logicalBuild distance:" +distance);
+        float distance = 0;
+        if (userLocation != null) {
+            distance = distanceCalculate(latGunung, longGunung, userLocation.getLatitude(), userLocation.getLongitude());
+            Log.d(TAG, "logicalBuild distance:" + distance);
         }
-        if (suhu<=32 &&kelembapan>=15){
+        if (suhu <= 32 && kelembapan >= 15) {
             //normal
-            radius=0;
-        }
-        else if (suhu <= 32 && kelembapan < 15) {
+            radius = 0;
+        } else if (suhu <= 32 && kelembapan < 15) {
             //waspada
             radius = 3;
             if (userLocation != null) {
-                if ( distance <= 3) {
+                if (distance <= 3) {
                     if (gempa <= 0) {
-                        notificationBuild( String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ),"Waspada", "Tidak", radius);
+                        notificationBuild(String.format(Locale.US, "Anda berada pada radius yang berbahaya %d KM.", radius), "Waspada", "Tidak", radius);
                     } else {
-                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ), "Waspada", "Ya", radius);
+                        notificationBuild(String.format(Locale.US, "Anda berada pada radius yang berbahaya %d KM.", radius), "Waspada", "Ya", radius);
                     }
-                }else if (distance>3){
-                    if (gempa<=0) {
+                } else if (distance > 3) {
+                    if (gempa <= 0) {
                         notificationBuild("Terjadi perubahan status gunung ke Waspada", "Waspada", "Tidak", radius);
-                    }else {
+                    } else {
                         notificationBuild("Terjadi perubahan status gunung ke Waspada", "Waspada", "Ya", radius);
                     }
                 }
 
             }
 
-        }
-        else if ((suhu > 32 && suhu <= 37) && (kelembapan >= 10 && kelembapan <= 14)) {
+        } else if ((suhu > 32 && suhu <= 37) && (kelembapan >= 10 && kelembapan <= 14)) {
             //waspada
             radius = 3;
             if (userLocation != null) {
-                if (distance< 3) {
+                if (distance < 3) {
                     if (gempa <= 0) {
-                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ), "Waspada", "Tidak", radius);
+                        notificationBuild(String.format(Locale.US, "Anda berada pada radius yang berbahaya %d KM.", radius), "Waspada", "Tidak", radius);
                     } else {
-                        notificationBuild( String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ), "Waspada", "Ya", radius);
+                        notificationBuild(String.format(Locale.US, "Anda berada pada radius yang berbahaya %d KM.", radius), "Waspada", "Ya", radius);
                     }
-                }else {
-                    if (gempa<=0) {
+                } else {
+                    if (gempa <= 0) {
                         notificationBuild("Terjadi perubahan status gunung ke Waspada", "Waspada", "Tidak", radius);
-                    }else {
+                    } else {
                         notificationBuild("Terjadi perubahan status gunung ke Waspada", "Waspada", "Ya", radius);
                     }
                 }
@@ -348,14 +344,14 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
             if (userLocation != null) {
                 if (distance < 6) {
                     if (gempa <= 0) {
-                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ),"Siaga", "Tidak", radius);
-                    } else{
-                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ),"Siaga", "Ya", radius);
+                        notificationBuild(String.format(Locale.US, "Anda berada pada radius yang berbahaya %d KM.", radius), "Siaga", "Tidak", radius);
+                    } else {
+                        notificationBuild(String.format(Locale.US, "Anda berada pada radius yang berbahaya %d KM.", radius), "Siaga", "Ya", radius);
                     }
-                }else {
-                    if (gempa<=0) {
+                } else {
+                    if (gempa <= 0) {
                         notificationBuild("Terjadi perubahan status gunung ke Siaga", "Siaga", "Tidak", radius);
-                    }else {
+                    } else {
                         notificationBuild("Terjadi perubahan status gunung ke Siaga", "Siaga", "Ya", radius);
                     }
                 }
@@ -367,14 +363,14 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
             if (userLocation != null) {
                 if (distance < 9) {
                     if (gempa <= 0) {
-                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ),"Awas", "Tidak", radius);
+                        notificationBuild(String.format(Locale.US, "Anda berada pada radius yang berbahaya %d KM.", radius), "Awas", "Tidak", radius);
                     } else {
-                        notificationBuild(String.format(Locale.US,"Anda berada pada radius yang berbahaya %d KM.", radius ),"Awas", "Ya", radius);
+                        notificationBuild(String.format(Locale.US, "Anda berada pada radius yang berbahaya %d KM.", radius), "Awas", "Ya", radius);
                     }
-                }else {
-                    if (gempa<=0) {
+                } else {
+                    if (gempa <= 0) {
                         notificationBuild("Terjadi perubahan status gunung ke Awas", "Awas", "Tidak", radius);
-                    }else {
+                    } else {
                         notificationBuild("Terjadi perubahan status gunung ke Awas", "Awas", "Ya", radius);
                     }
                 }
@@ -422,7 +418,7 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
 
     @Override
     public void onLocationChanged(Location location) {
-        if (location != null&&suhu!=-200000) {
+        if (location != null && suhu != -200000) {
             locationBroadcast.putExtra("user_location", location);
             locationBroadcast.putExtra("radius", radius);
             sendBroadcast(locationBroadcast);
