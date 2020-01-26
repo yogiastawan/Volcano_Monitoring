@@ -152,8 +152,6 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
         mapIntent.putExtra("long_gunung", longGunung);
         mapIntent.putExtra("radius", radi);
         if (userLocation != null) {
-//            Bundle bundle=new Bundle();
-//            bundle.putParcelable("location",userLocation);
             mapIntent.putExtra("user_location", userLocation);
         }
 //        mapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
