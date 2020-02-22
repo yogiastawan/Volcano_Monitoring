@@ -419,7 +419,7 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0; i < jsonArrayData.length(); i++) {
                         dataAfterProcess = jsonArrayData.getJSONObject(i);
                         c = dataAfterProcess.getString("created_at");
-                        final String mSubstring = c.substring(c.length() - 9, c.length() - 4);
+                        final String mSubstring = c.substring(c.length() - 14, c.length() - 9);
                         if (xVal.size() == 6) {
                             xVal.set(i, mSubstring);
                             yValSuhu.set(i, new Entry((float) i, (float) dataAfterProcess.getDouble("field1")));
