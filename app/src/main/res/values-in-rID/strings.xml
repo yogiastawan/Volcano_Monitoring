@@ -16,8 +16,12 @@
     <string name="radius_bahaya">Radius Bahaya: — KM.</string>
     <string name="radius_km">Radius: — KM</string>
     <string name="show_map">Buka Peta</string>
-    <string name="tremor">Earthquake</string>
     <string name="siaga">Siaga</string>
     <string name="waspada">Waspada</string>
     <string name="lembab">Lembab</string>
+    <string name="humidity">Kelembapan</string>
+    <string name="temperature">Suhu</string>
+    <string name="tremor">Gempa</string>
+    <string name="getaran">Tremor</string>
+    <string name="radius_danger">Radius Bahaya: — KM.</string>
 </resources>

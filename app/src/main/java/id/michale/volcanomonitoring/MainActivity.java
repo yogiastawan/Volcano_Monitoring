@@ -141,8 +141,11 @@ public class MainActivity extends AppCompatActivity {
         mainActivityModel = ViewModelProviders.of(this).get(MainActivityModel.class);
 
         suhu = findViewById(R.id.suhu);
+        suhu.setLabel(getString(R.string.temperature));
         kelembapan = findViewById(R.id.kelembapan);
+        kelembapan.setLabel(getString(R.string.humidity));
         tremor = findViewById(R.id.gempa);
+        tremor.setLabel(getString(R.string.getaran));
         statusGunung = findViewById(R.id.status);
         chart = findViewById(R.id.chart);
 
@@ -204,9 +207,9 @@ public class MainActivity extends AppCompatActivity {
             yValKelembapan = mainActivityModel.getChartYValKelembapan();
             setData();
         }
-        
+
         //check google play
-        if (!isGooglePlayServiceAvailable()){
+        if (!isGooglePlayServiceAvailable()) {
             Toast.makeText(this, "Google Play Service is not avaliable. Map and location will not work properly", Toast.LENGTH_LONG).show();
         }
 
@@ -214,13 +217,13 @@ public class MainActivity extends AppCompatActivity {
         checkConnectionInternet();
 
         //check permission
-        if (!checkPermission()){
+        if (!checkPermission()) {
             requestPermission();
 
-            if (!checkBackgroundLocationPermission()){
+            if (!checkBackgroundLocationPermission()) {
                 requestPermissionBackLocation();
             }
-        }else {
+        } else {
             requestPermission();
             requestPermissionBackLocation();
         }
@@ -238,49 +241,50 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MainActivity", "onCreate: receive data");
     }
 
-    private boolean isGooglePlayServiceAvailable(){
-        GoogleApiAvailability googleApiAvailability=GoogleApiAvailability.getInstance();
-        int state=googleApiAvailability.isGooglePlayServicesAvailable(this);
-        if (state!= ConnectionResult.SUCCESS){
-            if (googleApiAvailability.isUserResolvableError(state)){
-                googleApiAvailability.getErrorDialog(this,state,2404).show();
+    private boolean isGooglePlayServiceAvailable() {
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int state = googleApiAvailability.isGooglePlayServicesAvailable(this);
+        if (state != ConnectionResult.SUCCESS) {
+            if (googleApiAvailability.isUserResolvableError(state)) {
+                googleApiAvailability.getErrorDialog(this, state, 2404).show();
             }
             return false;
         }
         return true;
     }
 
-    private boolean checkPermission(){
-        int fineLocationPermission= ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        int coarseLocationPermission=ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION);
+    private boolean checkPermission() {
+        int fineLocationPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        int coarseLocationPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
         return fineLocationPermission == PackageManager.PERMISSION_GRANTED && coarseLocationPermission == PackageManager.PERMISSION_GRANTED;
     }
 
-    private boolean checkBackgroundLocationPermission(){
-        int backLocationPermission= 0;
+    private boolean checkBackgroundLocationPermission() {
+        int backLocationPermission = 0;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             backLocationPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
         }
 
-        return backLocationPermission==PackageManager.PERMISSION_GRANTED;
+        return backLocationPermission == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void requestPermission(){
-        ActivityCompat.requestPermissions(MainActivity.this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},PERMISSIONS_REQUEST_CODE);
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_REQUEST_CODE);
     }
-    private void requestPermissionBackLocation(){
+
+    private void requestPermissionBackLocation() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ActivityCompat.requestPermissions(MainActivity.this,new String[] {Manifest.permission.ACCESS_BACKGROUND_LOCATION},PERMISSIONS_REQUEST_CODE);
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, PERMISSIONS_REQUEST_CODE);
         }
     }
 
-    private void checkConnectionInternet(){
+    private void checkConnectionInternet() {
         Log.d("INTERNET", "oncek: ncek internet");
-        ConnectivityManager connectivityManager= (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP&&Build.VERSION.SDK_INT<= Build.VERSION_CODES.P){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
             if (connectivityManager != null) {
-                NetworkInfo info=connectivityManager.getActiveNetworkInfo();
-                if (info==null||!info.isConnectedOrConnecting()){
+                NetworkInfo info = connectivityManager.getActiveNetworkInfo();
+                if (info == null || !info.isConnectedOrConnecting()) {
                     noInternetConnectionPrompt();
                     Log.d("INTERNET", "checkConnectionInternet: no connection");
                 }
@@ -288,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
-        if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             if (connectivityManager != null) {
                 connectivityManager.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback() {
                     @Override
@@ -312,10 +316,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void noInternetConnectionPrompt(){
+    private void noInternetConnectionPrompt() {
 //        AlertDialog dialog = null;
         Log.d("INTERNET", "onUnavailable: dialog");
-        AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
 
         dialogBuilder.setTitle("No Internet Connection")
                 .setMessage("Please turn off plan mode, and enable data connection or connect to wifi!")
@@ -329,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .setIcon(getDrawable(R.drawable.ic_portable_wifi_off_black_24dp));
-        AlertDialog dialog=dialogBuilder.create();
+        AlertDialog dialog = dialogBuilder.create();
         dialog.show();
     }
 
@@ -382,9 +386,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     /*
-    * Private class broadcaster receiver
-    * to receiving data from background service broadcaster
-    * */
+     * Private class broadcaster receiver
+     * to receiving data from background service broadcaster
+     * */
 
     private class DataProcess extends BroadcastReceiver {
         String data;
@@ -438,85 +442,103 @@ public class MainActivity extends AppCompatActivity {
                     String first = c.substring(0, c.indexOf('T'));
                     String second = c.substring(c.indexOf('T') + 1, c.indexOf('Z'));
                     lastSyncTime.setText(String.format("%s %s", first, second));
-
-                    if (Long.parseLong(tremor.getValue()) > 0) {
-                        tremor.setStatus(getString(R.string.tremor));
-                    } else if (Long.parseLong(tremor.getValue()) <= 0) {
-                        tremor.setStatus(getString(R.string.normal));
+                    try {
+                        if (Long.parseLong(tremor.getValue()) >= 20000) {
+                            tremor.setStatus(getString(R.string.tremor));
+                        } else if (Long.parseLong(tremor.getValue()) < 20000) {
+                            tremor.setStatus(getString(R.string.normal));
+                        }
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(MainActivity.this, String.format("%s Error: %s", R.string.tremor, e.toString()), Toast.LENGTH_LONG).show();
                     }
 
-                    Log.d("KELEMBAPAN", "rawDataProcessing: kelembapan " + Float.parseFloat(kelembapan.getValue()));
+//                        Log.d("KELEMBAPAN", "rawDataProcessing: kelembapan " + Float.parseFloat(kelembapan.getValue()));
 
-                    if (Float.parseFloat(suhu.getValue()) > 32 && Float.parseFloat(suhu.getValue()) <= 37) {
-                        suhu.setStatus(getString(R.string.waspada));
-                    } else if (Float.parseFloat(suhu.getValue()) > 37 && Float.parseFloat(suhu.getValue()) <= 39) {
-                        suhu.setStatus(getString(R.string.siaga));
-                    } else if (Float.parseFloat(suhu.getValue()) > 39) {
-                        suhu.setStatus(getString(R.string.awas));
+                    try {
+                        if (Float.parseFloat(suhu.getValue()) > 32 && Float.parseFloat(suhu.getValue()) <= 37) {
+                            suhu.setStatus(getString(R.string.waspada));
+                        } else if (Float.parseFloat(suhu.getValue()) > 37 && Float.parseFloat(suhu.getValue()) <= 39) {
+                            suhu.setStatus(getString(R.string.siaga));
+                        } else if (Float.parseFloat(suhu.getValue()) > 39) {
+                            suhu.setStatus(getString(R.string.awas));
+                        } else if (Float.parseFloat(suhu.getValue()) <= 32) {
+                            suhu.setStatus(getString(R.string.normal));
+                        }
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(MainActivity.this, String.format("%s Error: %s", R.string.temperature, e.toString()), Toast.LENGTH_LONG).show();
                     }
 
-                    if (Float.parseFloat(kelembapan.getValue()) >= 35f) {
-                        kelembapan.setStatus(getString(R.string.basah));
-                    } else if (Float.parseFloat(kelembapan.getValue()) >= 15f && Float.parseFloat(kelembapan.getValue()) < 35f) {
-                        kelembapan.setStatus(getString(R.string.lembab));
-                    } else if (Float.parseFloat(kelembapan.getValue()) < 15f) {
-                        kelembapan.setStatus(getString(R.string.kering));
+                    try{
+                        if (Float.parseFloat(kelembapan.getValue()) >= 35f) {
+                            kelembapan.setStatus(getString(R.string.basah));
+                        } else if (Float.parseFloat(kelembapan.getValue()) >= 15f && Float.parseFloat(kelembapan.getValue()) < 35f) {
+                            kelembapan.setStatus(getString(R.string.lembab));
+                        } else if (Float.parseFloat(kelembapan.getValue()) < 15f) {
+                            kelembapan.setStatus(getString(R.string.kering));
+                        }
+                    }catch (NumberFormatException e) {
+                        Toast.makeText(MainActivity.this, String.format("%s Error: %s",R.string.humidity, e.toString()),Toast.LENGTH_LONG).show();
                     }
 
                     //logical eruption
-                    if (Float.parseFloat(suhu.getValue()) <= 32 && Float.parseFloat(kelembapan.getValue()) >= 15) {
+                    try{
+                        if (Float.parseFloat(suhu.getValue()) <= 32 && Float.parseFloat(kelembapan.getValue()) >= 15) {
 //                    Log.d("IF", "rawDataProcessing: "+getString(R.string.eruption_no));
-                        suhu.setStatus(getString(R.string.normal));
-                        statusGunung.setStatus(getString(R.string.eruption_no));
-                        statusGunung.setLabel(getString(R.string.normal));
-                        statusGunung.setValue(getDrawable(R.drawable.ic_normal));
-                        mainActivityModel.setEruptSymbol(0);
-                        radius = 0;
+                            suhu.setStatus(getString(R.string.normal));
+                            statusGunung.setStatus(getString(R.string.eruption_no));
+                            statusGunung.setLabel(getString(R.string.normal));
+                            statusGunung.setValue(getDrawable(R.drawable.ic_normal));
+                            mainActivityModel.setEruptSymbol(0);
+                            radius = 0;
 //                    Log.d("PARSE", "rawDataProcessing: "+String.format(Locale.US,kelembapan.getValue()));
-                    } else if (Float.parseFloat(suhu.getValue()) <= 32 && Float.parseFloat(kelembapan.getValue()) < 15) {
-                        statusGunung.setStatus(getString(R.string.eruption_no));
-                        statusGunung.setLabel(getString(R.string.waspada));
-                        statusGunung.setValue(getDrawable(R.drawable.ic_waspada));
-                        mainActivityModel.setEruptSymbol(1);
-                        radius = 3;
-                        if (Long.parseLong(tremor.getValue()) > 0) {
-                            statusGunung.setStatus(getString(R.string.eruption_yes));
-                        }
-                    } else if ((Float.parseFloat(suhu.getValue()) > 32 && Float.parseFloat(suhu.getValue()) <= 37) && (Float.parseFloat(kelembapan.getValue()) >= 10 && Float.parseFloat(kelembapan.getValue()) <= 14)) {
-                        statusGunung.setLabel(getString(R.string.waspada));
-                        statusGunung.setValue(getDrawable(R.drawable.ic_waspada));
-                        statusGunung.setStatus(getString(R.string.eruption_no));
-                        mainActivityModel.setEruptSymbol(1);
-                        radius = 3;
-                        if (Long.parseLong(tremor.getValue()) > 0) {
-                            statusGunung.setStatus(getString(R.string.eruption_yes));
-                        }
-                    } else if ((Float.parseFloat(suhu.getValue()) > 37 && Float.parseFloat(suhu.getValue()) <= 39) && (Float.parseFloat(kelembapan.getValue()) <= 9 && Float.parseFloat(kelembapan.getValue()) >= 5)) {
-                        statusGunung.setLabel(getString(R.string.siaga));
-                        statusGunung.setStatus(getString(R.string.eruption_no));
-                        statusGunung.setValue(getDrawable(R.drawable.ic_siaga));
-                        mainActivityModel.setEruptSymbol(2);
-                        radius = 6;
-                        if (Long.parseLong(tremor.getValue()) > 0) {
-                            statusGunung.setStatus(getString(R.string.eruption_yes));
-                        }
-                    } else if ((Float.parseFloat(suhu.getValue()) > 39) && (Float.parseFloat(kelembapan.getValue()) <= 4)) {
-                        statusGunung.setLabel(getString(R.string.awas));
-                        statusGunung.setStatus(getString(R.string.eruption_no));
-                        statusGunung.setValue(getDrawable(R.drawable.ic_awas));
-                        mainActivityModel.setEruptSymbol(3);
-                        radius = 9;
-                        if (Long.parseLong(tremor.getValue()) > 0) {
-                            statusGunung.setStatus(getString(R.string.eruption_yes));
-                        }
-                    } else {
+                        } else if (Float.parseFloat(suhu.getValue()) <= 32 && Float.parseFloat(kelembapan.getValue()) < 15) {
+                            statusGunung.setStatus(getString(R.string.eruption_no));
+                            statusGunung.setLabel(getString(R.string.waspada));
+                            statusGunung.setValue(getDrawable(R.drawable.ic_waspada));
+                            mainActivityModel.setEruptSymbol(1);
+                            radius = 3;
+                            if (Long.parseLong(tremor.getValue()) >= 20000) {
+                                statusGunung.setStatus(getString(R.string.eruption_yes));
+                            }
+                        } else if ((Float.parseFloat(suhu.getValue()) > 32 && Float.parseFloat(suhu.getValue()) <= 37) && (Float.parseFloat(kelembapan.getValue()) >= 10 && Float.parseFloat(kelembapan.getValue()) <= 14)) {
+                            statusGunung.setLabel(getString(R.string.waspada));
+                            statusGunung.setValue(getDrawable(R.drawable.ic_waspada));
+                            statusGunung.setStatus(getString(R.string.eruption_no));
+                            mainActivityModel.setEruptSymbol(1);
+                            radius = 3;
+                            if (Long.parseLong(tremor.getValue()) >= 20000) {
+                                statusGunung.setStatus(getString(R.string.eruption_yes));
+                            }
+                        } else if ((Float.parseFloat(suhu.getValue()) > 37 && Float.parseFloat(suhu.getValue()) <= 39) && (Float.parseFloat(kelembapan.getValue()) <= 9 && Float.parseFloat(kelembapan.getValue()) >= 5)) {
+                            statusGunung.setLabel(getString(R.string.siaga));
+                            statusGunung.setStatus(getString(R.string.eruption_no));
+                            statusGunung.setValue(getDrawable(R.drawable.ic_siaga));
+                            mainActivityModel.setEruptSymbol(2);
+                            radius = 6;
+                            if (Long.parseLong(tremor.getValue()) > -20000) {
+                                statusGunung.setStatus(getString(R.string.eruption_yes));
+                            }
+                        } else if ((Float.parseFloat(suhu.getValue()) > 39) && (Float.parseFloat(kelembapan.getValue()) <= 4)) {
+                            statusGunung.setLabel(getString(R.string.awas));
+                            statusGunung.setStatus(getString(R.string.eruption_no));
+                            statusGunung.setValue(getDrawable(R.drawable.ic_awas));
+                            mainActivityModel.setEruptSymbol(3);
+                            radius = 9;
+                            if (Long.parseLong(tremor.getValue()) >= 20000) {
+                                statusGunung.setStatus(getString(R.string.eruption_yes));
+                            }
+                        } else {
 //                    suhu.setStatus(getString(R.string.normal));
-                        statusGunung.setStatus(getString(R.string.unknown));
-                        statusGunung.setLabel(getString(R.string.unknown));
-                        mainActivityModel.setEruptSymbol(4);
-                        statusGunung.setValue(getDrawable(R.drawable.ic_unknown));
-                        radius = 0;
+                            statusGunung.setStatus(getString(R.string.unknown));
+                            statusGunung.setLabel(getString(R.string.unknown));
+                            mainActivityModel.setEruptSymbol(4);
+                            statusGunung.setValue(getDrawable(R.drawable.ic_unknown));
+                            radius = 0;
+                        }
+                    }catch (NumberFormatException e) {
+                        Toast.makeText(MainActivity.this, String.format("Error: %s", e.toString()),Toast.LENGTH_LONG).show();
                     }
+
 
                     //save state
                     mainActivityModel.setTempValue(suhu.getValue());
@@ -539,9 +561,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*
-    * set chart value
-    * when there are data receiving from background service
-    * */
+     * set chart value
+     * when there are data receiving from background service
+     * */
     private void setData() {
         LineDataSet mSuhu, mKelembapan;
 
@@ -584,8 +606,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*
-    * function to check is background service already running or not.
-    * */
+     * function to check is background service already running or not.
+     * */
 
     public Context getContext() {
         return ctx;

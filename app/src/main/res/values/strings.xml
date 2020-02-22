@@ -13,7 +13,7 @@
     <string name="eruption_no">Eruption: No</string>
     <string name="siaga">Level 3</string>
     <string name="awas">Level 4</string>
-    <string name="tremor">Gempa</string>
+    <string name="tremor">Earthquake</string>
     <string name="eruption_yes">Eruption: Yes</string>
     <string name="kering">Dry</string>
     <string name="basah">Moist</string>
@@ -23,4 +23,8 @@
     <string name="jarak_user">User Distance: — KM.</string>
     <string name="radius_bahaya">Danger Radius: — KM.</string>
     <string name="desc">Background service to get data from server dan get user location</string>
+    <string name="temperature">Temperature</string>
+    <string name="humidity">Humidity</string>
+    <string name="getaran">Tremor</string>
+    <string name="radius_danger">Danger Radius: — KM</string>
 </resources>

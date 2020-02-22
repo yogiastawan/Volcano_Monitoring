@@ -302,13 +302,13 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
             radius = 3;
             if (userLocation != null) {
                 if (distance <= 3) {
-                    if (gempa <= 0) {
+                    if (gempa <20000) {
                         notificationBuild(String.format(Locale.US, "Anda berada pada radius yang berbahaya %d KM.", radius), "Waspada", "Tidak", radius);
                     } else {
                         notificationBuild(String.format(Locale.US, "Anda berada pada radius yang berbahaya %d KM.", radius), "Waspada", "Ya", radius);
                     }
                 } else if (distance > 3) {
-                    if (gempa <= 0) {
+                    if (gempa <20000) {
                         notificationBuild("Terjadi perubahan status gunung ke Waspada", "Waspada", "Tidak", radius);
                     } else {
                         notificationBuild("Terjadi perubahan status gunung ke Waspada", "Waspada", "Ya", radius);
@@ -322,13 +322,13 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
             radius = 3;
             if (userLocation != null) {
                 if (distance < 3) {
-                    if (gempa <= 0) {
+                    if (gempa <20000) {
                         notificationBuild(String.format(Locale.US, "Anda berada pada radius yang berbahaya %d KM.", radius), "Waspada", "Tidak", radius);
                     } else {
                         notificationBuild(String.format(Locale.US, "Anda berada pada radius yang berbahaya %d KM.", radius), "Waspada", "Ya", radius);
                     }
                 } else {
-                    if (gempa <= 0) {
+                    if (gempa <20000) {
                         notificationBuild("Terjadi perubahan status gunung ke Waspada", "Waspada", "Tidak", radius);
                     } else {
                         notificationBuild("Terjadi perubahan status gunung ke Waspada", "Waspada", "Ya", radius);
@@ -341,13 +341,13 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
             radius = 6;
             if (userLocation != null) {
                 if (distance < 6) {
-                    if (gempa <= 0) {
+                    if (gempa <20000) {
                         notificationBuild(String.format(Locale.US, "Anda berada pada radius yang berbahaya %d KM.", radius), "Siaga", "Tidak", radius);
                     } else {
                         notificationBuild(String.format(Locale.US, "Anda berada pada radius yang berbahaya %d KM.", radius), "Siaga", "Ya", radius);
                     }
                 } else {
-                    if (gempa <= 0) {
+                    if (gempa <20000) {
                         notificationBuild("Terjadi perubahan status gunung ke Siaga", "Siaga", "Tidak", radius);
                     } else {
                         notificationBuild("Terjadi perubahan status gunung ke Siaga", "Siaga", "Ya", radius);
@@ -360,13 +360,13 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
             radius = 9;
             if (userLocation != null) {
                 if (distance < 9) {
-                    if (gempa <= 0) {
+                    if (gempa <20000) {
                         notificationBuild(String.format(Locale.US, "Anda berada pada radius yang berbahaya %d KM.", radius), "Awas", "Tidak", radius);
                     } else {
                         notificationBuild(String.format(Locale.US, "Anda berada pada radius yang berbahaya %d KM.", radius), "Awas", "Ya", radius);
                     }
                 } else {
-                    if (gempa <= 0) {
+                    if (gempa <20000) {
                         notificationBuild("Terjadi perubahan status gunung ke Awas", "Awas", "Tidak", radius);
                     } else {
                         notificationBuild("Terjadi perubahan status gunung ke Awas", "Awas", "Ya", radius);
@@ -416,7 +416,7 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
 
     @Override
     public void onLocationChanged(Location location) {
-        if (location != null && suhu != -200000) {
+        if (location != null && suhu != -2000) {
             locationBroadcast.putExtra("user_location", location);
             locationBroadcast.putExtra("radius", radius);
             sendBroadcast(locationBroadcast);

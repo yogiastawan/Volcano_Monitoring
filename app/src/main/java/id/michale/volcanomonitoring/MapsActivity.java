@@ -105,9 +105,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         // Add a marker in Sydney and move the camera
-        LatLng user=null;
         if (userLocation!=null) {
-            user = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
+            LatLng user = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
             mMap.addMarker(new MarkerOptions().position(user).title("Your Position").icon(bitmapDescriptorFromVector(this, R.drawable.ic_location_on_black_24dp)));
         }
         LatLng gunung = new LatLng(latitudeGunung, longitudeGunung);
@@ -163,7 +162,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (radius<99) {
                 radiusBahaya.setText(String.format(Locale.US, "Radius Bahaya %d KM.", radius));
             }else {
-                radiusBahaya.setText("Radius Bahaya -- KM.");
+                radiusBahaya.setText(getString(R.string.radius_danger));
             }
             mMap.clear();
             LatLng gunung = new LatLng(latitudeGunung, longitudeGunung);
@@ -211,10 +210,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent intent=new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        Intent intent=new Intent(this, MainActivity.class);
+//        startActivity(intent);
+//    }
 }
