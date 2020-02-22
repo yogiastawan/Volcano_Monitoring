@@ -50,7 +50,7 @@ public class GetDataThread extends Service implements GoogleApiClient.Connection
         LocationListener {
     private InputStream iStream = null;
     private HttpURLConnection urlConnection = null;
-    private String strUrl = "https://api.thingspeak.com/channels/757226/feeds.json?api_key=6ZFKPIZE6H9DXPXS&results=6";
+    private String strUrl = "https://api.thingspeak.com/channels/757226/feeds.json?api_key=6ZFKPIZE6H9DXPXS&results=6&timezone=Asia%2FSingapore";
 
     private final String KEY_DATA_UPDATE = "UpdateVolcanoStatus";
     private final String KEY_LOCATION_UPDATE = "UpdateVolcanoLocationUser";

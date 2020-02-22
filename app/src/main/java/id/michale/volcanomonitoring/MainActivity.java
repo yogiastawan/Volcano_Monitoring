@@ -440,7 +440,7 @@ public class MainActivity extends AppCompatActivity {
                     kelembapan.setValue(String.format(Locale.US, "%.1f", 100 * (1023 - (float) jsonArrayData.getJSONObject(5).getDouble("field2")) / 1023));
                     tremor.setValue(jsonArrayData.getJSONObject(5).getString("field3"));
                     String first = c.substring(0, c.indexOf('T'));
-                    String second = c.substring(c.indexOf('T') + 1, c.indexOf('Z'));
+                    String second = c.substring(c.indexOf('T') + 1, c.indexOf('+'));
                     lastSyncTime.setText(String.format("%s %s", first, second));
                     try {
                         if (Long.parseLong(tremor.getValue()) >= 20000) {
